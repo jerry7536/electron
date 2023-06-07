@@ -1,0 +1,201 @@
+import { Buffer } from 'node:buffer'
+import { createVerify } from 'node:crypto'
+import { createGunzip } from 'node:zlib'
+import { createReadStream, createWriteStream, existsSync } from 'node:fs'
+import { rm, writeFile } from 'node:fs/promises'
+import https from 'node:https'
+import { EventEmitter } from 'node:events'
+import { app } from 'electron'
+import { author, name } from '../../package.json'
+
+type UpdateJSON = {
+  signature: string
+  version: string
+  downloadUrl: string
+  size: number
+}
+
+export const updateStatus = {
+  UPDATE_UNAVAILABLE: 1,
+  UPDATE_DOWNLOADED: 2,
+  UPDATE_SUCCESS: 3,
+  UPDATE_FAILED: 4,
+} as const
+export const updateEvents = {
+  check: Symbol(1),
+  verify: Symbol(2),
+  downloadStart: Symbol(3),
+  downloading: Symbol(4),
+  downloadEnd: Symbol(5),
+  updateAvailable: Symbol(6),
+} as const
+
+export const SIGNATURE_PUB = `-----BEGIN RSA PUBLIC KEY-----
+MIICCgKCAgEA21QMN0+Nh7HZr55noAgrCHOzEMAZq2nIJLYSZiNXHtAFNvTzPIMV
+JkOfgdwNxuhEQVVhobyBBRKYVTcM73d+8TL0+1O3ykB70EnEnQ+hEVG36bbbT0JJ
+nG7oIkHspdqFNc9vzSzpn5Hr/0QA4jN8kDmllsxautTf7RtBNA2VyegyEWZjMIQZ
+EcDoI2Q4MTtyEkeVx/JP2do5U+KvwJ4gkvuB2Bs2dXCRA/4MGYp+mKj84OYFyaqG
+taLV/F7+w9fpo0Ki1xI92HaO9XSP8qM/s8tuVRqvmyOM6kinjcNqoKRbY8aqad6S
+YPmYHfdFy9nhd0EK+A+0Tu7c+RC6Rw/a3HZdFRpO0zjLV6jJx5HLbhE47e/wQCFq
+Y0yWH5CyZvnT7ztIhx/rG8eUorG9LoGFdYA9mfUPErC9P6O789eH7MYlzhIngrqK
+nS8ESxxTiwbotQPI1rV1KC3l1SraNzfSt1WWaofFd3/6YHvpXkISxtm8ZrG0mu5J
+aCtWPO2XTTSPtQzu8smOtnbervl8VBtyN+7pyeKyrIgZiElku99eeSCPUMA4r2Dm
+pVZZzK0QmmJ7G8QDwzftUlmdtazrRhhRwl3tRoQshgEPHUYBmxVwOwii1NTf1bQc
+Au2nQ9DNQnGgRaTWj54d/xTa3Tc0pgb039sHWhvC+8JoyJlEPh8RRsUCAwEAAQ==
+-----END RSA PUBLIC KEY-----
+`
+export const productName = name
+export const updater = new EventEmitter()
+
+async function download<T>(
+  url: string,
+  format: 'json',
+): Promise<T>
+async function download(
+  url: string,
+  format: 'buffer',
+): Promise<Buffer>
+async function download<T>(
+  url: string,
+  format: 'json' | 'buffer',
+): Promise<T | Buffer> {
+  const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
+  const maxRetries = 3
+  let retries = 0
+  let error: Error
+
+  while (retries < maxRetries) {
+    try {
+      return await new Promise((resolve, reject) => {
+        https.get(url, (res) => {
+          if (format === 'json') {
+            let data = ''
+            res.setEncoding('utf8')
+            res.headers = {
+              Accept: 'application/json',
+              UserAgent: ua,
+            }
+            res.on('data', chunk => (data += chunk))
+            res.on('end', () => {
+              resolve(JSON.parse(data))
+            })
+          } else if (format === 'buffer') {
+            let data = []
+            res.headers = {
+              Accept: 'application/octet-stream',
+              UserAgent: ua,
+            }
+            res.on('data', (chunk) => {
+              updater.emit(updateEvents.downloading, chunk.length)
+              data.push(chunk)
+            })
+            res.on('end', () => {
+              resolve(Buffer.concat(data))
+            })
+          }
+        }).on('error', (e) => {
+          error = e
+          reject(e)
+        })
+      })
+    } catch (e) {
+      error = e
+      retries++
+      await new Promise(resolve => setTimeout(resolve, 2 ** retries * 1000))
+    }
+  }
+  if (error) {
+    throw error
+  }
+}
+async function extractFile(gzipFilePath: string) {
+  if (!gzipFilePath.endsWith('.asar.gz') || !existsSync(gzipFilePath)) {
+    return
+  }
+  gzipFilePath = gzipFilePath.replace('.asar.gz', '.tmp.gz')
+  return new Promise((resolve, reject) => {
+    const gunzip = createGunzip()
+    const input = createReadStream(gzipFilePath)
+    const outputFilePath = gzipFilePath.replace('.tmp.gz', '.asar')
+    const output = createWriteStream(outputFilePath)
+
+    input
+      .pipe(gunzip)
+      .pipe(output)
+      .on('finish', async () => {
+        await rm(gzipFilePath)
+        resolve(outputFilePath)
+      })
+      .on('error', async (err) => {
+        await rm(gzipFilePath)
+        output.destroy(err)
+        reject(err)
+      })
+  })
+}
+
+function verify(buffer: Buffer, signature: string): boolean {
+  return createVerify('RSA-SHA256')
+    .update(buffer)
+    .verify(SIGNATURE_PUB, signature, 'base64')
+}
+
+function needUpdate(version: string) {
+  const parseVersion = (version: string) => {
+    const [major, minor, patch] = version.split('.')
+    return ~~major * 100 + ~~minor * 10 + ~~patch
+  }
+  return app.isPackaged
+    && parseVersion(app.getVersion()) < parseVersion(version)
+}
+
+export async function checkUpdate() {
+  const gzipPath = `../${productName}.asar.gz`
+  const tmpFile = gzipPath.replace('.asar.gz', '.tmp.gz')
+
+  // remove temp file
+  if (existsSync(tmpFile)) {
+    await rm(tmpFile)
+  }
+  try {
+    // have downloaded update before, extract and return
+    if (existsSync(gzipPath)) {
+      await extractFile(gzipPath)
+      updater.emit(updateEvents.check, updateStatus.UPDATE_SUCCESS)
+      return
+    }
+
+    // fetch update json
+    const {
+      downloadUrl,
+      signature,
+      version,
+      size,
+    } = await download<UpdateJSON>(
+      `https://raw.githubusercontent.com/${author}/${productName}/master/version.json`,
+      'json',
+    )
+
+    // if not need update, return
+    if (!needUpdate(version)) {
+      return updateStatus.UPDATE_UNAVAILABLE
+    }
+
+    // download update file buffer
+    const buffer = await download(downloadUrl, 'buffer')
+
+    // verify update file
+    if (!verify(buffer, signature)) {
+      throw new Error('file broken, invalid signature!')
+    }
+
+    // replace old file with new file
+    await writeFile(gzipPath, buffer)
+
+    return updateStatus.UPDATE_DOWNLOADED
+  } catch (error) {
+    // catch error
+    console.error(error)
+    return updateStatus.UPDATE_FAILED
+  }
+}

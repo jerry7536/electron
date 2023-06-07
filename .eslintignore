@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-electron
+.gitignore
+.github
+.vscode
+release
+app.js*
