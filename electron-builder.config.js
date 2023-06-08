@@ -41,7 +41,7 @@ module.exports = {
     publisherName: author,
   },
   nsis: {
-    artifactName: '${productName}-${version}-${arch}-Setup.${ext}',
+    artifactName: '${productName}-${os}-${version}-${arch}-Setup.${ext}',
     shortcutName: '${productName}',
     uninstallDisplayName: '${productName}',
     createDesktopShortcut: true,
@@ -58,9 +58,7 @@ module.exports = {
     artifactName: '${productName}-${os}-${version}-${arch}.${ext}',
     category: 'public.app-category.music',
     darkModeSupport: true,
-  },
-  dmg: {
-    artifactName: '${productName}-${version}.${ext}',
+    identity: null,
   },
   linux: {
     target: [
