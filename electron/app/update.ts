@@ -7,6 +7,7 @@ import https from 'node:https'
 import { EventEmitter } from 'node:events'
 import { app } from 'electron'
 import { author, name } from '../../package.json'
+import type { TypesafeEventEmitter } from './type'
 
 type UpdateJSON = {
   signature: string
@@ -21,14 +22,25 @@ export const updateStatus = {
   UPDATE_SUCCESS: 3,
   UPDATE_FAILED: 4,
 } as const
-export const updateEvents = {
-  check: Symbol(1),
-  verify: Symbol(2),
-  downloadStart: Symbol(3),
-  downloading: Symbol(4),
-  downloadEnd: Symbol(5),
-  updateAvailable: Symbol(6),
+export const CheckResult = {
+  success: 1,
+  fail: 2,
+  downloaded: 3,
+  unavailable: 4,
 } as const
+type CheckResultType = typeof CheckResult[keyof typeof CheckResult]
+export type Updater = TypesafeEventEmitter<UpdateEvents>
+export type UpdateEvents = {
+  check: [data: null]
+  checkResult: [data: CheckResultType, err?: Error]
+  downloadStart: [size: number]
+  downloading: [current: number]
+  downloadEnd: [success: boolean]
+  donwnloadError: [error: unknown]
+}
+export const productName = name
+
+export const updater = new EventEmitter() as Updater
 
 export const SIGNATURE_PUB = `-----BEGIN RSA PUBLIC KEY-----
 MIICCgKCAgEA21QMN0+Nh7HZr55noAgrCHOzEMAZq2nIJLYSZiNXHtAFNvTzPIMV
@@ -44,8 +56,15 @@ pVZZzK0QmmJ7G8QDwzftUlmdtazrRhhRwl3tRoQshgEPHUYBmxVwOwii1NTf1bQc
 Au2nQ9DNQnGgRaTWj54d/xTa3Tc0pgb039sHWhvC+8JoyJlEPh8RRsUCAwEAAQ==
 -----END RSA PUBLIC KEY-----
 `
-export const productName = name
-export const updater = new EventEmitter()
+
+updater.on('check', async () => {
+  try {
+    const result = await checkUpdate()
+    updater.emit('checkResult', result)
+  } catch (error) {
+    updater.emit('checkResult', CheckResult.fail, error)
+  }
+})
 
 async function download<T>(
   url: string,
@@ -62,7 +81,7 @@ async function download<T>(
   const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
   const maxRetries = 3
   let retries = 0
-  let error: Error
+  let error: Error | undefined
 
   while (retries < maxRetries) {
     try {
@@ -86,10 +105,11 @@ async function download<T>(
               UserAgent: ua,
             }
             res.on('data', (chunk) => {
-              updater.emit(updateEvents.downloading, chunk.length)
+              updater.emit('downloading', chunk.length)
               data.push(chunk)
             })
             res.on('end', () => {
+              updater.emit('downloadEnd', true)
               resolve(Buffer.concat(data))
             })
           }
@@ -105,7 +125,7 @@ async function download<T>(
     }
   }
   if (error) {
-    throw error
+    updater.emit('donwnloadError', error)
   }
 }
 async function extractFile(gzipFilePath: string) {
@@ -149,7 +169,7 @@ function needUpdate(version: string) {
     && parseVersion(app.getVersion()) < parseVersion(version)
 }
 
-export async function checkUpdate() {
+export async function checkUpdate(): Promise<CheckResultType> {
   const gzipPath = `../${productName}.asar.gz`
   const tmpFile = gzipPath.replace('.asar.gz', '.tmp.gz')
 
@@ -157,45 +177,39 @@ export async function checkUpdate() {
   if (existsSync(tmpFile)) {
     await rm(tmpFile)
   }
-  try {
-    // have downloaded update before, extract and return
-    if (existsSync(gzipPath)) {
-      await extractFile(gzipPath)
-      updater.emit(updateEvents.check, updateStatus.UPDATE_SUCCESS)
-      return
-    }
+  // have downloaded update before, extract and return
+  if (existsSync(gzipPath)) {
+    await extractFile(gzipPath)
+    return CheckResult.success
+  }
 
-    // fetch update json
-    const {
-      downloadUrl,
-      signature,
-      version,
-      size,
-    } = await download<UpdateJSON>(
+  // fetch update json
+  const {
+    downloadUrl,
+    signature,
+    version,
+    size,
+  } = await download<UpdateJSON>(
       `https://raw.githubusercontent.com/${author}/${productName}/master/version.json`,
       'json',
-    )
+  )
 
-    // if not need update, return
-    if (!needUpdate(version)) {
-      return updateStatus.UPDATE_UNAVAILABLE
-    }
-
-    // download update file buffer
-    const buffer = await download(downloadUrl, 'buffer')
-
-    // verify update file
-    if (!verify(buffer, signature)) {
-      throw new Error('file broken, invalid signature!')
-    }
-
-    // replace old file with new file
-    await writeFile(gzipPath, buffer)
-
-    return updateStatus.UPDATE_DOWNLOADED
-  } catch (error) {
-    // catch error
-    console.error(error)
-    return updateStatus.UPDATE_FAILED
+  // if not need update, return
+  if (!needUpdate(version)) {
+    return CheckResult.unavailable
   }
+
+  updater.emit('downloadStart', size)
+  // download update file buffer
+  const buffer = await download(downloadUrl, 'buffer')
+
+  // verify update file
+  if (!verify(buffer, signature)) {
+    throw new Error('file broken, invalid signature!')
+  }
+
+  // replace old file with new file
+  await writeFile(gzipPath, buffer)
+
+  return CheckResult.downloaded
 }

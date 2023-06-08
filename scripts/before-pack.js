@@ -33,6 +33,7 @@ exports.default = async () => {
   const privateKeyPath = 'scripts/private.pem'
 
   await rename('dist', 'dist-electron/renderer')
+  await writeFile('dist-electron/version', version)
   await asar.createPackage('dist-electron', targetURL)
   await gzipFile(targetURL)
   if (isCI) {

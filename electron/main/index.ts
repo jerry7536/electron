@@ -1,6 +1,9 @@
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
+import type { Updater } from '../app/update'
+import { getAppAsarPath } from '../app/util'
+import { name } from '../../package.json'
 
 // The built directory structure
 //
@@ -18,7 +21,7 @@ process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ROOT, '../public')
   : process.env.DIST
 
-export default function init() {
+export default function (updater: Updater) {
   // Disable GPU Acceleration for Windows 7
   if (release().startsWith('6.1')) { app.disableHardwareAcceleration() }
 
@@ -29,6 +32,8 @@ export default function init() {
     app.quit()
     process.exit(0)
   }
+
+  console.log(getAppAsarPath(name))
 
   // Remove electron security warnings
   // This warning only shows in development mode

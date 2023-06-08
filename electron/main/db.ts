@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { app } from 'electron'
+import { requireNative } from '../app/util'
 
-const dep = app.isPackaged
-  ? '../../app.asar/node_modules/better-sqlite3'
-  : 'better-sqlite3'
-const Database = require(dep)
+const Database = requireNative<typeof import('better-sqlite3')>('better-sqlite3')
 const db = new Database(':memory:')
 
 db.exec(

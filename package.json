@@ -21,6 +21,7 @@
     "dev": "node scripts/before-build.js && vite",
     "build": "vue-tsc --noEmit && node scripts/before-build.js && vite build && electron-builder --config electron-builder.config.js",
     "preview": "vite preview",
+    "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps"
   },
   "devDependencies": {
