@@ -1,4 +1,4 @@
-const { name } = require('./package.json')
+const { name, author } = require('./package.json')
 
 const target = `${name}.asar`
 const targetURL = `release/${target}`
@@ -8,7 +8,7 @@ const targetURL = `release/${target}`
  * @see https://www.electron.build/configuration/configuration
  */
 module.exports = {
-  appId: 'YourAppID',
+  appId: 'ElectronMultiAsar',
   productName: name,
   files: [
     'app.js',
@@ -31,20 +31,24 @@ module.exports = {
   ],
   win: {
     target: [
-      // 'nsis',
+      // {
+      //   target: 'nsis',
+      //   arch: ['x64', 'ia32'],
+      // },
+      'nsis',
       '7z',
     ],
-    legalTrademarks: 'subframe7536',
+    publisherName: author,
   },
-  // nsis: {
-  //   artifactName: '${productName}-${version}-setup.${ext}',
-  //   shortcutName: '${productName}',
-  //   uninstallDisplayName: '${productName}',
-  //   createDesktopShortcut: true,
-  //   oneClick: true,
-  // },
+  nsis: {
+    artifactName: '${productName}-${version}-${arch}-Setup.${ext}',
+    shortcutName: '${productName}',
+    uninstallDisplayName: '${productName}',
+    createDesktopShortcut: true,
+    oneClick: true,
+  },
   mac: {
-    entitlementsInherit: 'build/entitlements.mac.plist',
+    // entitlementsInherit: 'build/entitlements.mac.plist',
     target: [
       {
         target: 'dmg',
@@ -64,32 +68,30 @@ module.exports = {
         target: 'AppImage',
         arch: ['x64'],
       },
-      {
-        target: 'tar.gz',
-        arch: ['x64', 'arm64'],
-      },
-      {
-        target: 'deb',
-        arch: ['x64', 'armv7l', 'arm64'],
-      },
-      {
-        target: 'rpm',
-        arch: ['x64'],
-      },
-      {
-        target: 'snap',
-        arch: ['x64'],
-      },
-      {
-        target: 'pacman',
-        arch: ['x64'],
-      },
+      // {
+      //   target: 'tar.gz',
+      //   arch: ['x64', 'arm64'],
+      // },
+      // {
+      //   target: 'deb',
+      //   arch: ['x64', 'armv7l', 'arm64'],
+      // },
+      // {
+      //   target: 'rpm',
+      //   arch: ['x64'],
+      // },
+      // {
+      //   target: 'snap',
+      //   arch: ['x64'],
+      // },
+      // {
+      //   target: 'pacman',
+      //   arch: ['x64'],
+      // },
     ],
     category: 'Music',
     maintainer: 'subframe7536',
-  },
-  appImage: {
     artifactName: '${productName}-${version}.${ext}',
   },
-  beforePack: 'scripts/before-pack.js',
+  publish: null,
 }

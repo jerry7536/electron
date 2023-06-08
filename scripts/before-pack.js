@@ -4,7 +4,7 @@ const { readFile, rename, writeFile } = require('node:fs/promises')
 const zlib = require('node:zlib')
 const asar = require('asar')
 const { isCI } = require('ci-info')
-const { author, name, version } = require('../package.json')
+const { name, version, repository } = require('../package.json')
 
 function gzipFile(filePath) {
   return new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ function generateSignature(buffer, privateKey) {
       saltLength: constants.RSA_PSS_SALTLEN_DIGEST,
     }, 'base64')
 }
-exports.default = async () => {
+(async () => {
   const targetURL = `release/${name}.asar`
   const privateKeyPath = 'scripts/private.pem'
 
@@ -45,6 +45,6 @@ exports.default = async () => {
     signature,
     version,
     size: buffer.length,
-    downloadUrl: `https://github.com/${author}/${name}/releases/download/v${version}/${name}-${version}.asar.gz`,
+    downloadUrl: `${repository}/releases/download/v${version}/${name}.asar.gz`,
   }, null, 2))
-}
+})()

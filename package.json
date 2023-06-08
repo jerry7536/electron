@@ -12,6 +12,7 @@
     "vue3",
     "vue"
   ],
+  "repository": "https://github.com/jerry7536/electron",
   "debug": {
     "env": {
       "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
@@ -19,7 +20,7 @@
   },
   "scripts": {
     "dev": "node scripts/before-build.js && vite",
-    "build": "vue-tsc --noEmit && node scripts/before-build.js && vite build && electron-builder --config electron-builder.config.js",
+    "build": "vue-tsc --noEmit && node scripts/before-build.js && vite build && node scripts/before-pack.js && electron-builder --config electron-builder.config.js",
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps"
