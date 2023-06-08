@@ -1,7 +1,8 @@
 import { release } from 'node:os'
 import { join } from 'node:path'
-import { BrowserWindow, app, ipcMain, shell } from 'electron'
+import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
 import type { Updater } from '../app/update'
+import { CheckResult } from '../app/update'
 import { getAppAsarPath } from '../app/util'
 import { name } from '../../package.json'
 
@@ -34,6 +35,36 @@ export default function (updater: Updater) {
   }
 
   console.log(getAppAsarPath(name))
+
+  updater.emit('check')
+  updater.on('checkResult', async (result, err) => {
+    console.log(result, err)
+    switch (result) {
+      case CheckResult.success:
+        await dialog.showMessageBox({
+          type: 'info',
+          buttons: ['Restart', 'Later'],
+          message: 'Application successfully updated!',
+        }).then(({ response }) => {
+          if (response === 0) {
+            app.relaunch()
+            app.quit()
+          }
+        })
+        break
+      case CheckResult.unavailable:
+        console.log('Unavailable')
+        break
+      case CheckResult.fail:
+        console.log('Failed')
+        console.error(err)
+        break
+    }
+  })
+  updater.on('downloadStart', console.log)
+  updater.on('downloading', console.log)
+  updater.on('downloadEnd', console.log)
+  updater.on('donwnloadError', console.error)
 
   // Remove electron security warnings
   // This warning only shows in development mode

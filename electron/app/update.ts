@@ -6,7 +6,7 @@ import { rm, writeFile } from 'node:fs/promises'
 import https from 'node:https'
 import { EventEmitter } from 'node:events'
 import { app } from 'electron'
-import { author, name } from '../../package.json'
+import { name, repository } from '../../package.json'
 import type { TypesafeEventEmitter } from './type'
 
 type UpdateJSON = {
@@ -25,13 +25,12 @@ export const updateStatus = {
 export const CheckResult = {
   success: 1,
   fail: 2,
-  downloaded: 3,
-  unavailable: 4,
+  unavailable: 3,
 } as const
 type CheckResultType = typeof CheckResult[keyof typeof CheckResult]
 export type Updater = TypesafeEventEmitter<UpdateEvents>
 export type UpdateEvents = {
-  check: [data: null]
+  check: null
   checkResult: [data: CheckResultType, err?: Error]
   downloadStart: [size: number]
   downloading: [current: number]
@@ -39,6 +38,10 @@ export type UpdateEvents = {
   donwnloadError: [error: unknown]
 }
 export const productName = name
+
+const updateJSONUrl = `${repository.replace('github.com', 'raw.githubusercontent.com')}/master/version.json`
+
+console.log(updateJSONUrl)
 
 export const updater = new EventEmitter() as Updater
 
@@ -177,11 +180,6 @@ export async function checkUpdate(): Promise<CheckResultType> {
   if (existsSync(tmpFile)) {
     await rm(tmpFile)
   }
-  // have downloaded update before, extract and return
-  if (existsSync(gzipPath)) {
-    await extractFile(gzipPath)
-    return CheckResult.success
-  }
 
   // fetch update json
   const {
@@ -189,10 +187,9 @@ export async function checkUpdate(): Promise<CheckResultType> {
     signature,
     version,
     size,
-  } = await download<UpdateJSON>(
-      `https://raw.githubusercontent.com/${author}/${productName}/master/version.json`,
-      'json',
-  )
+  } = await download<UpdateJSON>(updateJSONUrl, 'json')
+
+  console.log(version, size, downloadUrl, signature)
 
   // if not need update, return
   if (!needUpdate(version)) {
@@ -210,6 +207,7 @@ export async function checkUpdate(): Promise<CheckResultType> {
 
   // replace old file with new file
   await writeFile(gzipPath, buffer)
+  await extractFile(gzipPath)
 
-  return CheckResult.downloaded
+  return CheckResult.success
 }
