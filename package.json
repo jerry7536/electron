@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "main": "app.js",
   "description": "Electron example of multi asar",
-  "author": "subframe7536",
+  "author": "jerry7536",
   "license": "MIT",
   "private": true,
   "keywords": [

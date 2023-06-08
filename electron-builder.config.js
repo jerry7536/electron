@@ -16,6 +16,7 @@ module.exports = {
     '!**/{tsconfig.json,tsconfig.node.json,tsconfig.web.json}',
     '!**/*debug*.*',
     '!**/*.{md,zip,map}',
+    '!**/*.{c,cpp,h,hpp,cc,hh,cxx,hxx,gypi,gyp,sh}',
     '!**/.{github,vscode}',
     '!node_modules/**/better-sqlite3/deps/**',
   ],
