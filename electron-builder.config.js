@@ -1,7 +1,6 @@
 const { name, author } = require('./package.json')
 
 const target = `${name}.asar`
-const targetURL = `release/${target}`
 /* eslint-disable no-template-curly-in-string */
 /**
  * @type {import('electron-builder').Configuration}
@@ -27,7 +26,7 @@ module.exports = {
     output: 'release',
   },
   extraResources: [
-    { from: targetURL, to: target },
+    { from: target, to: target },
   ],
   win: {
     target: [

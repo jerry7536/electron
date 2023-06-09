@@ -5,6 +5,7 @@ dist
 dist-electron
 release
 *.local
+*.asar
 
 # Editor directories and files
 .vscode/.debug.env

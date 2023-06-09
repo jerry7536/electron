@@ -29,17 +29,17 @@ function generateSignature(buffer, privateKey) {
     }, 'base64')
 }
 (async () => {
-  const targetURL = `release/${name}.asar`
+  const target = `${name}.asar`
   const privateKeyPath = 'scripts/private.pem'
 
   await rename('dist', 'dist-electron/renderer')
   await writeFile('dist-electron/version', version)
-  await asar.createPackage('dist-electron', targetURL)
-  await gzipFile(targetURL)
+  await asar.createPackage('dist-electron', target)
+  await gzipFile(target)
   if (isCI) {
     return
   }
-  const buffer = await readFile(`${targetURL}.gz`)
+  const buffer = await readFile(`${target}.gz`)
   const signature = generateSignature(buffer, await readFile(privateKeyPath, 'utf-8'))
   await writeFile('version.json', JSON.stringify({
     signature,
