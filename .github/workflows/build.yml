@@ -75,7 +75,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: release-artifacts/**/*
-          name: Release ${{ github.ref_name }}
+          name: Release ${{ github.ref }}
           prerelease: true
           token: ${{ secrets.TOKEN }}
           generate_release_notes: true
