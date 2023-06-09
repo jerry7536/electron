@@ -4,7 +4,7 @@ const { readFile, rename, writeFile } = require('node:fs/promises')
 const zlib = require('node:zlib')
 const asar = require('asar')
 const { isCI } = require('ci-info')
-const { name, version, repository } = require('../package.json')
+const { name, version } = require('../package.json')
 
 function gzipFile(filePath) {
   return new Promise((resolve, reject) => {
@@ -35,16 +35,15 @@ function generateSignature(buffer, privateKey) {
   await rename('dist', 'dist-electron/renderer')
   await writeFile('dist-electron/version', version)
   await asar.createPackage('dist-electron', target)
-  await gzipFile(target)
   if (isCI) {
     return
   }
+  await gzipFile(target)
   const buffer = await readFile(`${target}.gz`)
   const signature = generateSignature(buffer, await readFile(privateKeyPath, 'utf-8'))
   await writeFile('version.json', JSON.stringify({
     signature,
     version,
     size: buffer.length,
-    downloadUrl: `${repository.replace('github.com', 'cdn.jsdelivr.net/gh')}/${name}.asar.gz`,
   }, null, 2))
 })()

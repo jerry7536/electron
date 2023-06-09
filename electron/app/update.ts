@@ -12,7 +12,6 @@ import type { TypesafeEventEmitter } from './type'
 type UpdateJSON = {
   signature: string
   version: string
-  downloadUrl: string
   size: number
 }
 
@@ -33,7 +32,9 @@ export type UpdateEvents = {
 }
 export const productName = name
 
-const updateJSONUrl = `${repository.replace('github.com', 'cdn.jsdelivr.net/gh')}/version.json`
+const base = repository.replace('github.com', 'cdn.jsdelivr.net/gh')
+const updateJSONUrl = `${base}/version.json`
+const downloadUrl = `${base}/${name}.asar.gz`
 
 console.log(`updateJSONUrl: ${updateJSONUrl}`)
 
@@ -169,13 +170,12 @@ export async function checkUpdate(): Promise<CheckResultType> {
   }
 
   const {
-    downloadUrl,
     signature,
     version,
     size,
   } = json
 
-  console.log(version, size, downloadUrl, signature)
+  console.log(version, size, signature)
 
   // if not need update, return
   if (!needUpdate(version)) {
