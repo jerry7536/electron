@@ -25,7 +25,8 @@
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps",
-    "release": "changelogen --output && bumpp -x \"pnpm run version:update\" --no-push --all && git push"
+    "generatelog": "changelogen --output",
+    "release": "pnpm generatelog && bumpp -x \"pnpm run version:update\" --all"
   },
   "devDependencies": {
     "@subframe7536/eslint-config": "^0.1.9",
