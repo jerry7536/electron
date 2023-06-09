@@ -1,6 +1,6 @@
 {
   "name": "electron-vite-multi-asar",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "app.js",
   "description": "Electron example of multi asar",
   "author": "jerry7536",
