@@ -25,7 +25,7 @@
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps",
-    "version:release": "pnpm version:update && changelogen --output",
+    "version:release": "changelogen --output log.md && pnpm version:update && git add .",
     "release": "bumpp -x \"pnpm run version:release\" --all"
   },
   "devDependencies": {
