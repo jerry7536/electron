@@ -2,9 +2,9 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
 import type { Updater } from '../app/update'
-import { CheckResult } from '../app/update'
-import { getAppAsarPath } from '../app/util'
+import { getAppAsarPath, getAppVersion, getElectronVersion } from '../app/util'
 import { name } from '../../package.json'
+import { setupSession } from './session'
 
 // The built directory structure
 //
@@ -34,14 +34,15 @@ export default function (updater: Updater) {
     process.exit(0)
   }
 
-  console.log(getAppAsarPath(name))
-  console.log('new version')
+  console.log('\ncurrent:')
+  console.log(`\tasar path: ${getAppAsarPath(name)}`)
+  console.log(`\telectron:  ${getElectronVersion()}`)
+  console.log(`\tapp:       ${getAppVersion(name)}`)
 
   updater.emit('check')
   updater.on('checkResult', async (result, err) => {
-    console.log(result, err)
     switch (result) {
-      case CheckResult.success:
+      case 'success':
         await dialog.showMessageBox({
           type: 'info',
           buttons: ['Restart', 'Later'],
@@ -53,11 +54,10 @@ export default function (updater: Updater) {
           }
         })
         break
-      case CheckResult.unavailable:
-        console.log('Unavailable')
+      case 'unavailable':
+        console.log('Update Unavailable')
         break
-      case CheckResult.fail:
-        console.log('Failed')
+      case 'fail':
         console.error(err)
         break
     }
@@ -84,8 +84,8 @@ export default function (updater: Updater) {
       icon: join(process.env.PUBLIC, 'favicon.ico'),
       webPreferences: {
         preload,
-      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-      // Consider using contextBridge.exposeInMainWorld
+        // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
+        // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       // nodeIntegration: true,
       // contextIsolation: false,
@@ -110,6 +110,9 @@ export default function (updater: Updater) {
       if (url.startsWith('https:')) { shell.openExternal(url) }
       return { action: 'deny' }
     })
+
+    setupSession()
+
   // win.webContents.on('will-navigate', (event, url) => { }) #344
   }
 

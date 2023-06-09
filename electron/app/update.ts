@@ -16,18 +16,12 @@ type UpdateJSON = {
   size: number
 }
 
-export const updateStatus = {
-  UPDATE_UNAVAILABLE: 1,
-  UPDATE_DOWNLOADED: 2,
-  UPDATE_SUCCESS: 3,
-  UPDATE_FAILED: 4,
-} as const
-export const CheckResult = {
-  success: 1,
-  fail: 2,
-  unavailable: 3,
-} as const
-type CheckResultType = typeof CheckResult[keyof typeof CheckResult]
+export type CheckResult = {
+  success: 'success'
+  fail: 'fail'
+  unavailable: 'unavailable'
+}
+type CheckResultType = CheckResult[keyof CheckResult]
 export type Updater = TypesafeEventEmitter<UpdateEvents>
 export type UpdateEvents = {
   check: null
@@ -41,7 +35,7 @@ export const productName = name
 
 const updateJSONUrl = `${repository.replace('github.com', 'raw.githubusercontent.com')}/master/version.json`
 
-console.log(updateJSONUrl)
+console.log(`updateJSONUrl: ${updateJSONUrl}`)
 
 export const updater = new EventEmitter() as Updater
 
@@ -65,7 +59,7 @@ updater.on('check', async () => {
     const result = await checkUpdate()
     updater.emit('checkResult', result)
   } catch (error) {
-    updater.emit('checkResult', CheckResult.fail, error)
+    updater.emit('checkResult', 'fail', error)
   }
 })
 
@@ -82,54 +76,40 @@ async function download<T>(
   format: 'json' | 'buffer',
 ): Promise<T | Buffer> {
   const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36'
-  const maxRetries = 3
-  let retries = 0
-  let error: Error | undefined
 
-  while (retries < maxRetries) {
-    try {
-      return await new Promise((resolve, reject) => {
-        https.get(url, (res) => {
-          if (format === 'json') {
-            let data = ''
-            res.setEncoding('utf8')
-            res.headers = {
-              Accept: 'application/json',
-              UserAgent: ua,
-            }
-            res.on('data', chunk => (data += chunk))
-            res.on('end', () => {
-              resolve(JSON.parse(data))
-            })
-          } else if (format === 'buffer') {
-            let data = []
-            res.headers = {
-              Accept: 'application/octet-stream',
-              UserAgent: ua,
-            }
-            res.on('data', (chunk) => {
-              updater.emit('downloading', chunk.length)
-              data.push(chunk)
-            })
-            res.on('end', () => {
-              updater.emit('downloadEnd', true)
-              resolve(Buffer.concat(data))
-            })
-          }
-        }).on('error', (e) => {
-          error = e
-          reject(e)
+  return await new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      if (format === 'json') {
+        let data = ''
+        res.setEncoding('utf8')
+        res.headers = {
+          Accept: 'application/json',
+          UserAgent: ua,
+        }
+        res.on('data', chunk => (data += chunk))
+        res.on('end', () => {
+          resolve(JSON.parse(data))
         })
-      })
-    } catch (e) {
-      error = e
-      retries++
-      await new Promise(resolve => setTimeout(resolve, 2 ** retries * 1000))
-    }
-  }
-  if (error) {
-    updater.emit('donwnloadError', error)
-  }
+      } else if (format === 'buffer') {
+        let data = []
+        res.headers = {
+          Accept: 'application/octet-stream',
+          UserAgent: ua,
+        }
+        res.on('data', (chunk) => {
+          updater.emit('downloading', chunk.length)
+          data.push(chunk)
+        })
+        res.on('end', () => {
+          updater.emit('downloadEnd', true)
+          resolve(Buffer.concat(data))
+        })
+      }
+    }).on('error', (e) => {
+      e && updater.emit('donwnloadError', e)
+      reject(e)
+    })
+  })
 }
 async function extractFile(gzipFilePath: string) {
   if (!gzipFilePath.endsWith('.asar.gz') || !existsSync(gzipFilePath)) {
@@ -182,18 +162,24 @@ export async function checkUpdate(): Promise<CheckResultType> {
   }
 
   // fetch update json
+  const json = await download<UpdateJSON>(updateJSONUrl, 'json')
+
+  if (!json) {
+    throw new Error('fetch update json failed')
+  }
+
   const {
     downloadUrl,
     signature,
     version,
     size,
-  } = await download<UpdateJSON>(updateJSONUrl, 'json')
+  } = json
 
   console.log(version, size, downloadUrl, signature)
 
   // if not need update, return
   if (!needUpdate(version)) {
-    return CheckResult.unavailable
+    return 'unavailable'
   }
 
   updater.emit('downloadStart', size)
@@ -209,5 +195,5 @@ export async function checkUpdate(): Promise<CheckResultType> {
   await writeFile(gzipPath, buffer)
   await extractFile(gzipPath)
 
-  return CheckResult.success
+  return 'success'
 }

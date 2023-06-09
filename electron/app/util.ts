@@ -11,7 +11,9 @@ export function getElectronVersion() {
 }
 
 export function getAppVersion(name: string) {
-  return readFileSync(join(getAppAsarPath(name), 'version'), 'utf-8').trim()
+  return app.isPackaged
+    ? readFileSync(join(getAppAsarPath(name), 'version'), 'utf-8').trim()
+    : getElectronVersion()
 }
 
 export function requireNative<T>(packageName: string): T {
