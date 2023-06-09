@@ -1,4 +1,17 @@
 
+## v0.1.9...master
+
+[compare changes](https://github.com/jerry7536/electron/compare/v0.1.9...master)
+
+
+### 🏡 Chore
+
+  - Remove log.md ([3a2a761](https://github.com/jerry7536/electron/commit/3a2a761))
+
+### ❤️  Contributors
+
+- Subframe7536 <1667077010@qq.com>
+
 ## v0.1.7...master
 
 [compare changes](https://github.com/jerry7536/electron/compare/v0.1.7...master)
