@@ -1,8 +1,5 @@
 name: Build
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -21,37 +18,64 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: npm
 
       - name: Install Dependencies
         run: npm install
 
       - name: Build Release Files
         run: npm run build
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - uses: actions/upload-artifact@v3
         with:
-          name: upload-asar
           path: release/*.asar.gz
           if-no-files-found: ignore
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: upload-mac
-          path: releae/*-universal.dmg
-          if-no-files-found: ignore
+  build-windows:
+    runs-on: windows-latest
+    needs: build
+    steps:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: upload-win
           path: |
-            releae/*Setup*.exe
-            releae/*win.7z
+            release/*Setup*.exe
+            release/*win.7z
           if-no-files-found: ignore
 
+  build-mac:
+    runs-on: macos-latest
+    needs: build
+    steps:
       - uses: actions/upload-artifact@v3
         with:
-          name: upload-linux
-          path: releae/*.AppImage
+          path: release/*-universal.dmg
           if-no-files-found: ignore
+
+  build-linux:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/upload-artifact@v3
+        with:
+          path: release/*.AppImage
+          if-no-files-found: ignore
+
+  release:
+    needs:
+      - build-linux
+      - build-mac
+      - build-windows
+    steps:
+      - name: download-artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release
+
+      - name: list all release files
+        run: ls release
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*
