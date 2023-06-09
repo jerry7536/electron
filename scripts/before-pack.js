@@ -45,6 +45,6 @@ function generateSignature(buffer, privateKey) {
     signature,
     version,
     size: buffer.length,
-    downloadUrl: `${repository}/releases/download/v${version}/${name}.asar.gz`,
+    downloadUrl: `${repository.replace('github.com', 'cdn.jsdelivr.net/gh')}/${name}.asar.gz`,
   }, null, 2))
 })()

@@ -33,7 +33,7 @@ export type UpdateEvents = {
 }
 export const productName = name
 
-const updateJSONUrl = `${repository.replace('github.com', 'raw.githubusercontent.com')}/master/version.json`
+const updateJSONUrl = `${repository.replace('github.com', 'cdn.jsdelivr.net/gh')}/version.json`
 
 console.log(`updateJSONUrl: ${updateJSONUrl}`)
 
