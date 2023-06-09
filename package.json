@@ -25,14 +25,13 @@
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps",
-    "version:release": "changelogen --output && pnpm version:update && git add .",
+    "version:release": "pnpm version:update",
     "release": "bumpp -x \"pnpm run version:release\" --all"
   },
   "devDependencies": {
     "@subframe7536/eslint-config": "^0.1.9",
     "@types/better-sqlite3": "^7.6.4",
     "@vitejs/plugin-vue": "^4.2.3",
-    "changelogen": "^0.5.3",
     "ci-info": "^3.8.0",
     "electron": "^24.4.1",
     "electron-builder": "^23.6.0",

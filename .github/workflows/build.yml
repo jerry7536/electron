@@ -80,10 +80,16 @@ jobs:
           token: ${{ secrets.TOKEN }}
           generate_release_notes: true
 
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
       - name: changelog
-        run: npx changelogen@latest gh release --token ${{ secrets.TOKEN }}
+        run: npx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.TOKEN}}
