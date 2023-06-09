@@ -71,10 +71,11 @@ module.exports = {
       //   target: 'tar.gz',
       //   arch: ['x64', 'arm64'],
       // },
-      // {
-      //   target: 'deb',
-      //   arch: ['x64', 'armv7l', 'arm64'],
-      // },
+      {
+        target: 'deb',
+        // arch: ['x64', 'armv7l', 'arm64'],
+        arch: ['x64'],
+      },
       // {
       //   target: 'rpm',
       //   arch: ['x64'],
@@ -90,7 +91,7 @@ module.exports = {
     ],
     category: 'Music',
     maintainer: 'subframe7536',
-    artifactName: '${productName}-${version}.${ext}',
+    artifactName: '${productName}-${os}-${version}-${arch}.${ext}',
   },
   publish: null,
 }

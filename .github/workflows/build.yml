@@ -76,3 +76,4 @@ jobs:
         with:
           files: release-artifacts/**/*
           draft: true
+          token: ${{ secrets.TOKEN }}
