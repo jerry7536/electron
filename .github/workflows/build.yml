@@ -75,21 +75,15 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: release-artifacts/**/*
-          name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           prerelease: true
           token: ${{ secrets.TOKEN }}
           generate_release_notes: true
-
-      - name: Setup Pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: pnpm
 
       - name: changelog
-        run: pnpm exec changelogen@latest gh release --token ${{ secrets.TOKEN }}
+        run: npx changelogen@latest gh release --token ${{ secrets.TOKEN }}
