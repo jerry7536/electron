@@ -92,7 +92,4 @@ jobs:
           cache: pnpm
 
       - name: changelog
-        run: pnpm exec changelogen@latest gh release
-        with:
-          env:
-            GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run: pnpm exec changelogen@latest gh release --token ${{ secrets.TOKEN }}
