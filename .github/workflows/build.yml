@@ -65,8 +65,7 @@ jobs:
 
       - name: list all release files
         run: |
-          ls -alF release-action
-          ls -alF release
+          ls -R release-action
 
       # - name: release
       #   uses: softprops/action-gh-release@v1
