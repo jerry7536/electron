@@ -1,6 +1,6 @@
 {
   "name": "electron-vite-multi-asar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "app.js",
   "description": "Electron example of multi asar",
   "author": "jerry7536",
@@ -24,7 +24,8 @@
     "build": "pnpm run version:update && electron-builder --config electron-builder.config.js",
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "release": "bumpp -x \"pnpm run version:update\" --no-push"
   },
   "devDependencies": {
     "@subframe7536/eslint-config": "^0.1.9",
