@@ -76,6 +76,6 @@ jobs:
         with:
           files: release-artifacts/**/*
           name: Release ${{ github.ref_name }}
-          prelease: true
+          prerelease: true
           token: ${{ secrets.TOKEN }}
           generate_release_notes: true
