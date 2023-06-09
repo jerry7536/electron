@@ -35,6 +35,7 @@ export default function (updater: Updater) {
   }
 
   console.log(getAppAsarPath(name))
+  console.log('new version')
 
   updater.emit('check')
   updater.on('checkResult', async (result, err) => {
