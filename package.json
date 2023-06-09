@@ -1,6 +1,6 @@
 {
   "name": "electron-vite-multi-asar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "app.js",
   "description": "Electron example of multi asar",
   "author": "jerry7536",
@@ -20,7 +20,8 @@
   },
   "scripts": {
     "dev": "node scripts/before-build.js && vite",
-    "build": "vue-tsc --noEmit && node scripts/before-build.js && vite build && node scripts/before-pack.js && electron-builder --config electron-builder.config.js",
+    "version:update": "vue-tsc --noEmit && node scripts/before-build.js && vite build && node scripts/before-pack.js",
+    "build": "pnpm run version:update && electron-builder --config electron-builder.config.js",
     "preview": "vite preview",
     "test": "pnpm build && cd release/win-unpacked && .\\electron-vite-multi-asar.exe",
     "postinstall": "electron-builder install-app-deps"
