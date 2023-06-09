@@ -35,7 +35,7 @@ module.exports = {
       //   target: 'nsis',
       //   arch: ['x64', 'ia32'],
       // },
-      'nsis',
+      // 'nsis',
       '7z',
     ],
     publisherName: author,
@@ -52,7 +52,8 @@ module.exports = {
     target: [
       {
         target: 'dmg',
-        arch: ['x64', 'arm64', 'universal'],
+        // arch: ['x64', 'arm64', 'universal'],
+        arch: ['universal'],
       },
     ],
     artifactName: '${productName}-${os}-${version}-${arch}.${ext}',

@@ -33,11 +33,13 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: release-asar
           path: release/*.asar.gz
           if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v3
         with:
+          name: release-windows
           path: |
             release/*Setup*.exe
             release/*win.7z
@@ -45,11 +47,13 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: release/*-universal.dmg
+          name: release-macos
+          path: release/*.dmg
           if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v3
         with:
+          name: release-linux
           path: release/*.AppImage
           if-no-files-found: ignore
 
@@ -61,13 +65,14 @@ jobs:
       - name: download-artifacts
         uses: actions/download-artifact@v3
         with:
-          path: release-action
+          path: release-artifacts
 
       - name: list all release files
         run: |
-          ls -R release-action
+          ls -R release-artifacts
 
-      # - name: release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: release/*
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release-artifacts/**/*
+          draft: true
