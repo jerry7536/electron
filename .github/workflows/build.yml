@@ -86,6 +86,6 @@ jobs:
           node-version: 18
 
       - name: changelog
-        run: npx changelogithub
+        run: npx changelogithub --prerelease
         env:
           GITHUB_TOKEN: ${{secrets.TOKEN}}
