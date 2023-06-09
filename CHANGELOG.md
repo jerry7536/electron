@@ -1,4 +1,17 @@
 
+## v0.1.11...master
+
+[compare changes](https://github.com/jerry7536/electron/compare/v0.1.11...master)
+
+
+### 🩹 Fixes
+
+  - Ci ([161280c](https://github.com/jerry7536/electron/commit/161280c))
+
+### ❤️  Contributors
+
+- Subframe7536 <1667077010@qq.com>
+
 ## v0.1.10...master
 
 [compare changes](https://github.com/jerry7536/electron/compare/v0.1.10...master)
