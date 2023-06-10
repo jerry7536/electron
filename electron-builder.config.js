@@ -26,7 +26,7 @@ module.exports = {
     output: 'release',
   },
   extraResources: [
-    { from: target, to: target },
+    { from: `release/${target}`, to: target },
   ],
   win: {
     target: [

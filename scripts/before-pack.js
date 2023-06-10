@@ -29,7 +29,7 @@ function generateSignature(buffer, privateKey) {
     }, 'base64')
 }
 (async () => {
-  const target = `${name}.asar`
+  const target = `release/${name}.asar`
   const privateKeyPath = 'scripts/private.pem'
 
   await rename('dist', 'dist-electron/renderer')
