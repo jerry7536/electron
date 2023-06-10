@@ -56,34 +56,36 @@ jobs:
     needs:
       - build
     steps:
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: download-artifacts
+        id: download
         uses: actions/download-artifact@v3
         with:
           path: release-artifacts
 
       - name: list all release files
         run: |
-          ls -R release-artifacts
-
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+          ls -R ${{steps.download.outputs.download-path}}
 
       - name: release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release-artifacts/**/*
+            ${{steps.download.outputs.download-path}}/**/*
             *.asar.gz
           name: Release ${{ github.ref_name }}
           prerelease: true
           token: ${{ secrets.TOKEN }}
           generate_release_notes: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
       - name: changelog
         run: npx changelogithub --prerelease
