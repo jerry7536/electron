@@ -33,6 +33,13 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: release-asar
+          path: |
+            release/*.asar.gz
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v3
+        with:
           name: release-windows
           path: |
             release/*Setup*.exe
