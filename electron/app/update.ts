@@ -32,12 +32,6 @@ export type UpdateEvents = {
 }
 export const productName = name
 
-const base = repository.replace('github.com', 'cdn.jsdelivr.net/gh')
-const updateJSONUrl = `${base}/version.json`
-const downloadUrl = `${base}/${name}.asar.gz`
-
-console.log(`updateJSONUrl: ${updateJSONUrl}`)
-
 export const updater = new EventEmitter() as Updater
 
 export const SIGNATURE_PUB = `-----BEGIN RSA PUBLIC KEY-----
@@ -153,9 +147,12 @@ function needUpdate(version: string) {
     && parseVersion(app.getVersion()) < parseVersion(version)
 }
 
-export async function checkUpdate(): Promise<CheckResultType> {
+export async function checkUpdate(releaseCdnPrefix?: string): Promise<CheckResultType> {
   const gzipPath = `../${productName}.asar.gz`
   const tmpFile = gzipPath.replace('.asar.gz', '.tmp.gz')
+  const base = repository.replace('https://github.com', '')
+  const updateJSONUrl = `https://cdn.jsdelivr.net/gh/${base}/version.json`
+  const downloadUrl = `${releaseCdnPrefix ? `${releaseCdnPrefix}/${base}` : repository}/releases/download/latest/${name}.asar.gz`
 
   // remove temp file
   if (existsSync(tmpFile)) {
