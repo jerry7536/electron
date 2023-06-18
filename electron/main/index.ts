@@ -1,8 +1,8 @@
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
-import type { Updater } from '../app/update'
-import { getAppAsarPath, getAppVersion, getElectronVersion } from '../app/util'
+import type { Updater } from 'electron-incremental-update'
+import { getAppAsarPath, getAppVersion, getElectronVersion } from 'electron-incremental-update'
 import { name } from '../../package.json'
 import { setupSession } from './session'
 
@@ -39,7 +39,7 @@ export default function (updater: Updater) {
   console.log(`\telectron:  ${getElectronVersion()}`)
   console.log(`\tapp:       ${getAppVersion(name)}`)
 
-  updater.emit('check')
+  updater.checkUpdate()
   updater.on('checkResult', async (result, err) => {
     switch (result) {
       case 'success':

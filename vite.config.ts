@@ -2,6 +2,7 @@ import { rmSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
+import updater from 'electron-incremental-update/vite'
 import pkg from './package.json'
 
 // https://vitejs.dev/config/
@@ -28,6 +29,7 @@ export default defineConfig(({ command }) => {
             }
           },
           vite: {
+            plugins: [updater({ productName: pkg.name, version: pkg.version, isBuild })],
             build: {
               sourcemap,
               minify: false,
