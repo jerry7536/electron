@@ -1,4 +1,4 @@
-import { createUpdater, getReleaseDnsPrefix, initApp } from 'electron-incremental-update'
+import { getReleaseCdnLink, initApp } from 'electron-incremental-update'
 import { name, repository } from '../package.json'
 
 const SIGNATURE_PUB = `-----BEGIN RSA PUBLIC KEY-----
@@ -10,12 +10,10 @@ FDXfBcHb0NauaVatOQejKttkamvwCBW79ZOhMOJLEdScHIedDoDrGBhpIeigP0vA
 fLBusN8h1CaLDWNjZ0B3yEuwq8aOLQCGXQIDAQAB
 -----END RSA PUBLIC KEY-----
 `
-const { urlPrefix } = getReleaseDnsPrefix()[0]
-const updater = createUpdater({
+const { url } = getReleaseCdnLink(`${repository}/download/latest/${name}.asar.gz`)[0]
+initApp(name, {
   SIGNATURE_PUB,
   repository,
-  productName: name,
   updateJsonURL: `https://cdn.jsdelivr.net/gh/${repository.replace('https://github.com', '')}/version.json`,
-  releaseAsarURL: `${urlPrefix}/download/latest/${name}.asar.gz`,
+  releaseAsarURL: url,
 })
-initApp(name, updater)
