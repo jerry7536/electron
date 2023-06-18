@@ -29,7 +29,6 @@ export default defineConfig(({ command }) => {
             }
           },
           vite: {
-            plugins: [updater({ productName: pkg.name, version: pkg.version, isBuild })],
             build: {
               sourcemap,
               minify: false,
@@ -49,6 +48,7 @@ export default defineConfig(({ command }) => {
             options.reload()
           },
           vite: {
+            plugins: [updater({ productName: pkg.name, version: pkg.version, isBuild })],
             build: {
               sourcemap: sourcemap ? 'inline' : undefined, // #332
               minify: isBuild,

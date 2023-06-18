@@ -18,4 +18,4 @@ const updater = createUpdater({
   updateJsonURL: `https://cdn.jsdelivr.net/gh/${repository.replace('https://github.com', '')}/version.json`,
   releaseAsarURL: `${urlPrefix}/download/latest/${name}.asar.gz`,
 })
-initApp('test', updater)
+initApp(name, updater)
