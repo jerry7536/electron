@@ -35,7 +35,7 @@
     "ci-info": "^3.8.0",
     "electron": "^24.4.1",
     "electron-builder": "^24.4.0",
-    "electron-incremental-update": "^0.1.7",
+    "electron-incremental-update": "0.2.0",
     "electron-settings": "^4.0.2",
     "eslint": "^8.43.0",
     "ofetch": "^1.1.0",

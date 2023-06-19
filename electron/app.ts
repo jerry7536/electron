@@ -2,12 +2,12 @@ import { getReleaseCdnLink, initApp } from 'electron-incremental-update'
 import { name, repository } from '../package.json'
 
 const SIGNATURE_PUB = `-----BEGIN RSA PUBLIC KEY-----
-MIIBCgKCAQEAoPQzPWFFt5aoNBZ87p76/qnPV4rfoNBX7FQ7J+h5OI5llCGsXxzU
-Jt3oEIY1kb+kmf6iLWsFKHNVpb0x4NJB2mHN/F1WtZK/slqMsfGOq9dvdAZa+ZI1
-FDXfBcHb0NauaVatOQejKttkamvwCBW79ZOhMOJLEdScHIedDoDrGBhpIeigP0vA
-0NkHzkG3FI3V/JxD21QXQmBwrTbe0w7hs2KHAaDAsKfFRyBMMbjss4Rgzo+QGW1s
-7bVgLryMlVIRxQHPK5JbzbKuHQr/FQ03mRqaHccml5AT7jeynMSLtosA6cFn6fyF
-fLBusN8h1CaLDWNjZ0B3yEuwq8aOLQCGXQIDAQAB
+MIIBCgKCAQEA2FgFFZsGcMFvN2bj8RUF2ZmYB5qS/Q8XYVLoDBUF8wVvvJfIin8e
+rAm7pPvtx0zvbdy2+a1wtat7xLxnMC8vFcNidR1vIr8nnnQLJ68iATXh63BvYg1W
+Kufp0k4I1L33jUUsOLwbVRhtRJoB2ZRaI8thMGx7ruLXsTISm1Gt6PUU6wYZI3l8
+oatnNK/snq6RgGf46kDMrCGlsHqdbKUu2rrYEW8tEB8YapRsZT4jw4Ws6lSLZ0zG
+fQvAjqylBOA0bJZM9FDtvyqifOmP0KMj9LwfxO61b9Zp7E4kfkDjyqpFAKTG3bgi
+uNwg7AFB+WY7uPGbgvh0fOQjRKiOPxRCMwIDAQAB
 -----END RSA PUBLIC KEY-----
 `
 const { url } = getReleaseCdnLink(`${repository}/download/latest/${name}.asar.gz`)[0]

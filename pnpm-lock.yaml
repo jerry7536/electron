@@ -25,8 +25,8 @@ devDependencies:
     specifier: ^24.4.0
     version: 24.4.0
   electron-incremental-update:
-    specifier: ^0.1.7
-    version: 0.1.7(@electron/asar@3.2.4)(asar@3.2.0)
+    specifier: 0.2.0
+    version: 0.2.0(@electron/asar@3.2.4)(asar@3.2.0)
   electron-settings:
     specifier: ^4.0.2
     version: 4.0.2(electron@24.4.1)
@@ -1924,8 +1924,8 @@ packages:
       - supports-color
     dev: true
 
-  /electron-incremental-update@0.1.7(@electron/asar@3.2.4)(asar@3.2.0):
-    resolution: {integrity: sha512-YbhXIHNwReV6wK0acovmPPfmStYSitJHDuppmVJGgnBiBf1Uzc5E0ImDGOFxknSxM/eO0G5oMD2HDoCMv9LkzA==}
+  /electron-incremental-update@0.2.0(@electron/asar@3.2.4)(asar@3.2.0):
+    resolution: {integrity: sha512-i3ZiYyrS/OmtDYzAIEJ6ZH4Uu6btwp4f9Pdv3NAYx2stClXb52fdynRSQB93I1BdgRKRepLGwyRdqPj/gR/MDQ==}
     peerDependencies:
       '@electron/asar': '*'
       asar: '*'
