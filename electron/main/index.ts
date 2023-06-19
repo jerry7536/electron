@@ -2,7 +2,7 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
 import type { Updater } from 'electron-incremental-update'
-import { getAppAsarPath, getAppVersion, getElectronVersion } from 'electron-incremental-update'
+import { getAppAsarPath, getAppVersion, getEntryVersion } from 'electron-incremental-update'
 import { name } from '../../package.json'
 import { setupSession } from './session'
 
@@ -36,7 +36,7 @@ export default function (updater: Updater) {
 
   console.log('\ncurrent:')
   console.log(`\tasar path: ${getAppAsarPath(name)}`)
-  console.log(`\telectron:  ${getElectronVersion()}`)
+  console.log(`\tentry:     ${getEntryVersion()}`)
   console.log(`\tapp:       ${getAppVersion(name)}`)
 
   updater.checkUpdate()
