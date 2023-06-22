@@ -25,8 +25,8 @@ devDependencies:
     specifier: ^24.4.0
     version: 24.4.0
   electron-incremental-update:
-    specifier: 0.2.2
-    version: 0.2.2
+    specifier: 0.6.0
+    version: 0.6.0
   electron-settings:
     specifier: ^4.0.2
     version: 4.0.2(electron@24.4.1)
@@ -201,6 +201,10 @@ packages:
       '@babel/helper-string-parser': 7.21.5
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
+    dev: true
+
+  /@cyyynthia/jscert@0.1.2:
+    resolution: {integrity: sha512-MN7N0hzIitLZ8bX21I5T+rkZCF0Dk3UKLRCol+cF/b7/FgjtvMgnxZHxwaYB4BUWtlsHcYlZyVK/Z/k8VFE00g==}
     dev: true
 
   /@develar/schema-utils@2.6.5:
@@ -730,6 +734,12 @@ packages:
     resolution: {integrity: sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==}
     dev: true
 
+  /@types/node@20.3.1:
+    resolution: {integrity: sha512-EhcH/wvidPy1WeML3TtYFGR83UzjxeWRen9V402T8aUGYsCHOmfoisV3ZSg03gAFIbLq8TnWOJ0f4cALtnSEUg==}
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: true
@@ -738,7 +748,7 @@ packages:
     resolution: {integrity: sha512-ULqvZNGMv0zRFvqn8/4LSPtnmN4MfhlPNtJCTpKuIIxGVGZ2rYWzFXrvEBoh9CVyqSE7D6YFRJ1hydLHI6kbWw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 20.2.5
+      '@types/node': 20.3.1
       xmlbuilder: 15.1.1
     dev: true
     optional: true
@@ -1896,9 +1906,10 @@ packages:
       - supports-color
     dev: true
 
-  /electron-incremental-update@0.2.2:
-    resolution: {integrity: sha512-r9eDjbJ0YAMTqaTqCU1Gtm7IbGff5+mS3D8C7/ZF+CX7VyJ8D9X2T2VWsU2gUQcXO7wlUzuUHBHuZ6Ab34Z4tg==}
+  /electron-incremental-update@0.6.0:
+    resolution: {integrity: sha512-tsbqFFetRmC02aIJijMybAnrbrM200Ir/jijlL5X/JghlqVgx5viJ9vyQu3lxWwD2Z/XSF+EIXGBJnNPm2Ab/w==}
     dependencies:
+      '@cyyynthia/jscert': 0.1.2
       ci-info: 3.8.0
     dev: true
 

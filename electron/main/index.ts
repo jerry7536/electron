@@ -2,7 +2,7 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
 import type { Updater } from 'electron-incremental-update'
-import { getAppAsarPath, getAppVersion, getEntryVersion } from 'electron-incremental-update'
+import { getEntryVersion, getProductAsarPath, getProductVersion } from 'electron-incremental-update'
 import { name } from '../../package.json'
 import { setupSession } from './session'
 
@@ -35,37 +35,33 @@ export default function (updater: Updater) {
   }
 
   console.log('\ncurrent:')
-  console.log(`\tasar path: ${getAppAsarPath(name)}`)
+  console.log(`\tasar path: ${getProductAsarPath(name)}`)
   console.log(`\tentry:     ${getEntryVersion()}`)
-  console.log(`\tapp:       ${getAppVersion(name)}`)
-
-  updater.checkUpdate()
-  updater.on('checkResult', async (result, err) => {
-    switch (result) {
-      case 'success':
-        await dialog.showMessageBox({
-          type: 'info',
-          buttons: ['Restart', 'Later'],
-          message: 'Application successfully updated!',
-        }).then(({ response }) => {
-          if (response === 0) {
-            app.relaunch()
-            app.quit()
-          }
-        })
-        break
-      case 'unavailable':
-        console.log('Update Unavailable')
-        break
-      case 'fail':
-        console.error(err)
-        break
+  console.log(`\tapp:       ${getProductVersion(name)}`)
+  let size = 0
+  updater.on('downloading', (progress) => {
+    console.log(`${(progress / size).toFixed(2)}%`)
+  })
+  updater.on('debug', data => console.log('[updater]:', data))
+  updater.checkUpdate().then(async (result) => {
+    if (result === undefined) {
+      console.log('Update Unavailable')
+    } else if (result instanceof Error) {
+      console.error(result)
+    } else {
+      size = result.size
+      console.log('new version: ', result.version)
+      const { response } = await dialog.showMessageBox({
+        type: 'info',
+        buttons: ['Download', 'Later'],
+        message: 'Application update available!',
+      })
+      if (response !== 0) {
+        return
+      }
+      console.log(await updater.downloadAndInstall())
     }
   })
-  updater.on('downloadStart', console.log)
-  updater.on('downloading', console.log)
-  updater.on('downloadEnd', console.log)
-  updater.on('donwnloadError', console.error)
 
   // Remove electron security warnings
   // This warning only shows in development mode
