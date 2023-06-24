@@ -5,6 +5,3 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
-declare interface Window {
-  test: (callback: (_:any,data: any) => void) => void
-}

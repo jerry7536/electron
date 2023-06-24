@@ -1,4 +1,4 @@
-import { createUpdater, getGithubReleaseCdnGroup, initApp, parseGithubCdnURL } from 'electron-incremental-update'
+import { initApp } from 'electron-incremental-update'
 import { name, repository } from '../package.json'
 
 const SIGNATURE_CERT = `-----BEGIN CERTIFICATE-----
@@ -24,15 +24,15 @@ oROKxUZqSQpibVwh5nkSnVhGWQ7vMtpaxY71KnQ7URkJ2ABabY+kheLD3+zu7CZW
 +mpJU1Y=
 -----END CERTIFICATE-----`
 
-// initApp({ name }, { SIGNATURE_PUB, repository, debug: true })
+initApp({ name }, { SIGNATURE_CERT, repository, debug: true })
 
-const { cdnPrefix } = getGithubReleaseCdnGroup()[0]
-const updater = createUpdater({
-  SIGNATURE_CERT,
-  productName: name,
-  repository,
-  updateJsonURL: parseGithubCdnURL(repository, 'fastly.jsdelivr.net/gh', 'version.json'),
-  releaseAsarURL: parseGithubCdnURL(repository, cdnPrefix, `download/latest/${name}.asar.gz`),
-  debug: true,
-})
-initApp({ name }).setUpdater(updater)
+// const { cdnPrefix } = getGithubReleaseCdnGroup()[0]
+// const updater = createUpdater({
+//   SIGNATURE_CERT,
+//   productName: name,
+//   repository,
+//   updateJsonURL: parseGithubCdnURL(repository, 'fastly.jsdelivr.net/gh', 'version.json'),
+//   releaseAsarURL: parseGithubCdnURL(repository, cdnPrefix, `download/latest/${name}.asar.gz`),
+//   debug: true,
+// })
+// initApp({ name }).setUpdater(updater)

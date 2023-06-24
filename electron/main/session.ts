@@ -4,7 +4,6 @@ export function setupSession() {
   session.defaultSession.setProxy({
     mode: 'system',
   })
-  session.defaultSession.resolveProxy('https://google.com').then(console.log)
   session.defaultSession.webRequest.onHeadersReceived(
     { urls: ['https://*/*', 'http://*/*'] },
     (details, callback) => {

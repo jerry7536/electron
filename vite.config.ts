@@ -48,7 +48,9 @@ export default defineConfig(({ command }) => {
             options.reload()
           },
           vite: {
-            plugins: [updater({ productName: pkg.name, version: pkg.version, isBuild })],
+            plugins: [
+              updater({ productName: pkg.name, version: pkg.version, isBuild }),
+            ],
             build: {
               sourcemap: sourcemap ? 'inline' : undefined, // #332
               minify: isBuild,
@@ -59,17 +61,19 @@ export default defineConfig(({ command }) => {
             },
           },
         },
+        // Use Node.js API in the Renderer-process
+        // renderer(),
       ]),
-      // Use Node.js API in the Renderer-process
-      // renderer(),
     ],
-    server: process.env.VSCODE_DEBUG && (() => {
-      const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
-      return {
-        host: url.hostname,
-        port: +url.port,
-      }
-    })(),
+    server: process.env.VSCODE_DEBUG
+      ? (() => {
+          const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
+          return {
+            host: url.hostname,
+            port: +url.port,
+          }
+        })()
+      : undefined,
     clearScreen: false,
   }
 })

@@ -3,7 +3,9 @@ import { join } from 'node:path'
 import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
 import type { Updater } from 'electron-incremental-update'
 import { getEntryVersion, getProductAsarPath, getProductVersion } from 'electron-incremental-update'
+import { generateTypesafeIPC } from 'typesafe-electron-ipc'
 import { name } from '../../package.json'
+import { ipc } from '../ipc'
 import { setupSession } from './session'
 
 // The built directory structure
@@ -21,7 +23,7 @@ process.env.DIST = join(process.env.DIST_ROOT, 'renderer')
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ROOT, '../public')
   : process.env.DIST
-
+const { main } = generateTypesafeIPC(ipc, 'main')
 export default function (updater: Updater) {
   // Disable GPU Acceleration for Windows 7
   if (release().startsWith('6.1')) { app.disableHardwareAcceleration() }
@@ -34,35 +36,6 @@ export default function (updater: Updater) {
     process.exit(0)
   }
 
-  console.log('\ncurrent:')
-  console.log(`\tasar path: ${getProductAsarPath(name)}`)
-  console.log(`\tentry:     ${getEntryVersion()}`)
-  console.log(`\tapp:       ${getProductVersion(name)}`)
-  let size = 0
-  updater.on('downloading', (progress) => {
-    console.log(`${(progress / size).toFixed(2)}%`)
-  })
-  updater.on('debug', data => console.log('[updater]:', data))
-  updater.checkUpdate().then(async (result) => {
-    if (result === undefined) {
-      console.log('Update Unavailable')
-    } else if (result instanceof Error) {
-      console.error(result)
-    } else {
-      size = result.size
-      console.log('new version: ', result.version)
-      const { response } = await dialog.showMessageBox({
-        type: 'info',
-        buttons: ['Download', 'Later'],
-        message: 'Application update available!',
-      })
-      if (response !== 0) {
-        return
-      }
-      console.log(await updater.downloadAndInstall())
-    }
-  })
-
   // Remove electron security warnings
   // This warning only shows in development mode
   // Read more on https://www.electronjs.org/docs/latest/tutorial/security
@@ -71,8 +44,8 @@ export default function (updater: Updater) {
   let win: BrowserWindow | null = null
   // Here, you can also use other preload
   const preload = join(__dirname, '../preload/index.js')
-  const url = process.env.VITE_DEV_SERVER_URL
-  const indexHtml = join(process.env.DIST, 'index.html')
+  const url = process.env.VITE_DEV_SERVER_URL!
+  const indexHtml = join(process.env.DIST!, 'index.html')
 
   async function createWindow() {
     win = new BrowserWindow({
@@ -99,7 +72,7 @@ export default function (updater: Updater) {
 
     // Test actively push message to the Electron-Renderer
     win.webContents.on('did-finish-load', () => {
-      win?.webContents.send('test', new Date().toLocaleString())
+      main.test(win!, new Date().toLocaleString())
     })
 
     // Make all links open with the browser, not with the application
@@ -112,8 +85,35 @@ export default function (updater: Updater) {
 
   // win.webContents.on('will-navigate', (event, url) => { }) #344
   }
-
-  app.whenReady().then(createWindow).then(() => import('./db'))
+  app.whenReady().then(createWindow).then(async () => {
+    console.log('\ncurrent:')
+    console.log(`\tasar path: ${getProductAsarPath(name)}`)
+    console.log(`\tentry:     ${getEntryVersion()}`)
+    console.log(`\tapp:       ${getProductVersion(name)}`)
+    let size = 0
+    updater.on('downloading', (progress) => {
+      console.log(`${(progress / size).toFixed(2)}%`)
+    })
+    updater.on('debug', data => console.log('[updater]:', data))
+    const result = await updater.checkUpdate()
+    if (result === undefined) {
+      console.log('Update Unavailable')
+    } else if (result instanceof Error) {
+      console.error(result)
+    } else {
+      size = result.size
+      console.log('new version: ', result.version)
+      const { response } = await dialog.showMessageBox({
+        type: 'info',
+        buttons: ['Download', 'Later'],
+        message: 'Application update available!',
+      })
+      if (response !== 0) {
+        return
+      }
+      console.log(await updater.downloadAndInstall())
+    }
+  }).then(() => import('./db'))
 
   app.on('window-all-closed', () => {
     win = null
