@@ -10,11 +10,11 @@ export function setupSession() {
       let { responseHeaders, url } = details
 
       // Bypass CORS for github releases, for 3rd party plugins.
-      const hasOrigin = Object.keys(responseHeaders).some(
+      const hasOrigin = Object.keys(responseHeaders!).some(
         key => key.toLowerCase() === 'access-control-allow-origin',
       )
       if (!hasOrigin && (/^https?:\/\/[^\/]*(github)/.test(url))) {
-        responseHeaders['Access-Control-Allow-Origin'] = ['*']
+        responseHeaders!['Access-Control-Allow-Origin'] = ['*']
       }
 
       callback({ responseHeaders })
