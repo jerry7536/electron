@@ -1,4 +1,4 @@
-import { requireNative } from 'electron-incremental-update'
+import { requireNative } from 'electron-incremental-update/utils'
 
 const Database = requireNative<typeof import('better-sqlite3')>('better-sqlite3')
 const db = new Database(':memory:')

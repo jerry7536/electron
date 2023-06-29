@@ -2,6 +2,7 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import type { Updater } from 'electron-incremental-update'
+import { handleUnexpectedErrors } from 'electron-incremental-update/utils'
 import { name } from '../../package.json'
 import { main } from './ipc'
 import { setupSession } from './session'
@@ -22,6 +23,8 @@ process.env.DIST = join(process.env.DIST_ROOT, 'renderer')
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ROOT, '../public')
   : process.env.DIST
+
+handleUnexpectedErrors(console.log)
 export default function (updater: Updater) {
   // Disable GPU Acceleration for Windows 7
   if (release().startsWith('6.1')) { app.disableHardwareAcceleration() }

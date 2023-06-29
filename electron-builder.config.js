@@ -1,6 +1,6 @@
-const { name, author } = require('./package.json')
+const { name, author, version } = require('./package.json')
 
-const target = `${name}.asar`
+const target = `${name}-${version}.asar`
 /* eslint-disable no-template-curly-in-string */
 /**
  * @type {import('electron-builder').Configuration}

@@ -22,8 +22,8 @@ devDependencies:
     specifier: ^24.4.0
     version: 24.4.0
   electron-incremental-update:
-    specifier: 0.7.0
-    version: 0.7.0
+    specifier: ^0.7.1
+    version: 0.7.1
   eslint:
     specifier: ^8.43.0
     version: 8.43.0
@@ -2206,8 +2206,8 @@ packages:
       - supports-color
     dev: true
 
-  /electron-incremental-update@0.7.0:
-    resolution: {integrity: sha512-RsmlF0gVvQk403ISomNK5CWHBCwg0Ute4AoUQF2srv7BX/BpD/GyfTaZdPReIxu0itsPfXBpG2MTmHxTQXK6JA==}
+  /electron-incremental-update@0.7.1:
+    resolution: {integrity: sha512-4XAVRBZ+iNpFDepH2y/0+OtkQ30bPPSG0lBzvb7+xanHnXeIWmr2NJBHSCy/T+CLl8LsrKHaGABTnCZmCyqMPw==}
     dependencies:
       '@cyyynthia/jscert': 0.1.2
       ci-info: 3.8.0

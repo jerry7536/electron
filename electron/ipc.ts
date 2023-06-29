@@ -1,9 +1,9 @@
-import { mainSendOnceIpcFn, rendererSendOnceIpcFn } from 'typesafe-electron-ipc'
+import { mainSendOnceIpcFn, rendererSendIpcFn } from 'typesafe-electron-ipc'
 
 export const ipc = {
   msg: mainSendOnceIpcFn<string>(),
-  check: rendererSendOnceIpcFn(),
-  restore: rendererSendOnceIpcFn(),
+  check: rendererSendIpcFn(),
+  restore: rendererSendIpcFn(),
 }
 
 export type IPC = typeof ipc

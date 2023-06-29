@@ -1,16 +1,16 @@
-import { cpSync, existsSync, renameSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { dialog } from 'electron'
 import type { Updater } from 'electron-incremental-update'
-import { getEntryVersion, getProductAsarPath, getProductVersion } from 'electron-incremental-update'
+import { getEntryVersion, getProductAsarPath, getProductVersion, unzipFile, zipFile } from 'electron-incremental-update/utils'
 import { main } from './ipc'
 
 export function setupUpdater(name: string, updater: Updater) {
   console.log('\ncurrent:')
   const sourcePath = getProductAsarPath(name)
-  const backPath = `${sourcePath}.bak`
-  console.log(`\tasar path: ${sourcePath}`)
-  console.log(`\tentry:     ${getEntryVersion()}`)
-  console.log(`\tapp:       ${getProductVersion(name)}`)
+  const backPath = `${sourcePath}.bak.gz`
+  console.log(`\tasar path:         ${sourcePath}`)
+  console.log(`\tentry version:     ${getEntryVersion()}`)
+  console.log(`\tproduct version:   ${getProductVersion(name)}`)
   let size = 0
   updater.on('downloading', (progress) => {
     console.log(`${(progress / size).toFixed(2)}%`)
@@ -33,13 +33,17 @@ export function setupUpdater(name: string, updater: Updater) {
       if (response !== 0) {
         return
       }
-      console.log('backup')
-      cpSync(sourcePath, backPath)
+      try {
+        console.log('backup')
+        await zipFile(sourcePath, backPath)
+      } catch (e) {
+        console.error('error when backup', e)
+      }
       console.log(await updater.downloadAndInstall())
     }
   })
-  main.restore(() => {
+  main.restore(async () => {
     console.log('restore')
-    existsSync(backPath) && renameSync(backPath, sourcePath)
+    existsSync(backPath) && await unzipFile(backPath, sourcePath)
   })
 }
