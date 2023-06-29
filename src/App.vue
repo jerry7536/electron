@@ -17,12 +17,14 @@ rendererFn.msg((_: any, data: string) => {
     class="check"
     b="2 solid blue-400"
     m="r-2"
+    @click="rendererFn.check()"
   >
     check update
   </button>
   <button
     class="restore"
     b="2 solid red-400"
+    @click="rendererFn.restore()"
   >
     restore
   </button>

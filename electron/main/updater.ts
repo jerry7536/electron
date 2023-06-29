@@ -1,11 +1,14 @@
+import { cpSync, existsSync, renameSync } from 'node:fs'
 import { dialog } from 'electron'
 import type { Updater } from 'electron-incremental-update'
 import { getEntryVersion, getProductAsarPath, getProductVersion } from 'electron-incremental-update'
-import { main } from '.'
+import { main } from './ipc'
 
 export function setupUpdater(name: string, updater: Updater) {
   console.log('\ncurrent:')
-  console.log(`\tasar path: ${getProductAsarPath(name)}`)
+  const sourcePath = getProductAsarPath(name)
+  const backPath = `${sourcePath}.bak`
+  console.log(`\tasar path: ${sourcePath}`)
   console.log(`\tentry:     ${getEntryVersion()}`)
   console.log(`\tapp:       ${getProductVersion(name)}`)
   let size = 0
@@ -30,7 +33,13 @@ export function setupUpdater(name: string, updater: Updater) {
       if (response !== 0) {
         return
       }
+      console.log('backup')
+      cpSync(sourcePath, backPath)
       console.log(await updater.downloadAndInstall())
     }
+  })
+  main.restore(() => {
+    console.log('restore')
+    existsSync(backPath) && renameSync(backPath, sourcePath)
   })
 }

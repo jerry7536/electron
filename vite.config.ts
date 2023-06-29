@@ -2,7 +2,7 @@ import { rmSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
-import updater from 'electron-incremental-update/vite'
+import { ElectronUpdater } from 'electron-incremental-update/vite'
 import uno from 'unocss/vite'
 import pkg from './package.json'
 
@@ -34,6 +34,7 @@ export default defineConfig(({ command }) => {
             build: {
               sourcemap,
               minify: false,
+              reportCompressedSize: false,
               outDir: 'dist-electron/main',
               rollupOptions: {
                 external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
@@ -51,9 +52,10 @@ export default defineConfig(({ command }) => {
           },
           vite: {
             plugins: [
-              updater({ productName: pkg.name, version: pkg.version, isBuild }),
+              ElectronUpdater({ productName: pkg.name, version: pkg.version, isBuild }),
             ],
             build: {
+              reportCompressedSize: false,
               sourcemap: sourcemap ? 'inline' : undefined, // #332
               minify: isBuild,
               outDir: 'dist-electron/preload',

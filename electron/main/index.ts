@@ -2,9 +2,8 @@ import { release } from 'node:os'
 import { join } from 'node:path'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import type { Updater } from 'electron-incremental-update'
-import { generateTypesafeIPC } from 'typesafe-electron-ipc'
 import { name } from '../../package.json'
-import { ipc } from '../ipc'
+import { main } from './ipc'
 import { setupSession } from './session'
 import { setupUpdater } from './updater'
 
@@ -23,7 +22,6 @@ process.env.DIST = join(process.env.DIST_ROOT, 'renderer')
 process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ROOT, '../public')
   : process.env.DIST
-export const { main } = generateTypesafeIPC(ipc, 'main')
 export default function (updater: Updater) {
   // Disable GPU Acceleration for Windows 7
   if (release().startsWith('6.1')) { app.disableHardwareAcceleration() }
