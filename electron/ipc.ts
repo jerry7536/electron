@@ -1,7 +1,7 @@
-import { mainSendOnceIpcFn, rendererSendIpcFn } from 'typesafe-electron-ipc'
+import { mainSendIpcFn, rendererSendIpcFn } from 'typesafe-electron-ipc'
 
 export const ipc = {
-  msg: mainSendOnceIpcFn<string>(),
+  msg: mainSendIpcFn<string>(),
   check: rendererSendIpcFn(),
   restore: rendererSendIpcFn(),
 }

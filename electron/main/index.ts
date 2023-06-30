@@ -25,6 +25,8 @@ process.env.PUBLIC = process.env.VITE_DEV_SERVER_URL
   : process.env.DIST
 
 handleUnexpectedErrors(console.log)
+
+console.log(process.versions.openssl)
 export default function (updater: Updater) {
   // Disable GPU Acceleration for Windows 7
   if (release().startsWith('6.1')) { app.disableHardwareAcceleration() }
@@ -74,7 +76,7 @@ export default function (updater: Updater) {
     // Test actively push message to the Electron-Renderer
     win.webContents.on('did-finish-load', () => {
       setTimeout(() => {
-        main.msg(win!, 'main')
+        main.msg(win!, 'msg from main')
       }, 2000)
     })
 

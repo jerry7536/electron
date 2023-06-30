@@ -1,6 +1,6 @@
 {
   "name": "electron-vite-multi-asar",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "main": "app.js",
   "description": "Electron example of multi asar",
   "author": "jerry7536",
@@ -34,7 +34,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "electron": "^24.6.0",
     "electron-builder": "^24.4.0",
-    "electron-incremental-update": "^0.7.1",
+    "electron-incremental-update": "^0.7.2",
     "eslint": "^8.43.0",
     "typesafe-electron-ipc": "0.6.0",
     "typescript": "^5.1.3",

@@ -8,7 +8,7 @@ const count = ref(0)
 
 <template>
   <div mb-10>
-    message from {{ msg }}
+    {{ msg }}
   </div>
   <button
     type="button"
