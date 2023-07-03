@@ -1,12 +1,13 @@
-const { name, author, version } = require('./package.json')
+const { name, author } = require('./package.json')
 
-const target = `${name}-${version}.asar`
+const target = `${name}.asar`
 /* eslint-disable no-template-curly-in-string */
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
 module.exports = {
+  npmRebuild: false,
   appId: 'ElectronMultiAsar',
   productName: name,
   files: [

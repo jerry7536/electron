@@ -1,13 +1,13 @@
-import { existsSync } from 'node:fs'
-import { BrowserWindow, dialog } from 'electron'
+import { renameSync } from 'node:fs'
 import type { Updater } from 'electron-incremental-update'
-import { getEntryVersion, getProductAsarPath, getProductVersion, unzipFile } from 'electron-incremental-update/utils'
+import { getEntryVersion, getProductAsarPath, getProductVersion } from 'electron-incremental-update/utils'
+import { BrowserWindow, dialog } from 'electron'
 import { main } from './ipc'
 
 export function setupUpdater(name: string, updater: Updater) {
   console.log('\ncurrent:')
   const sourcePath = getProductAsarPath(name)
-  const backPath = `${sourcePath}.bak.gz`
+  const backPath = `${sourcePath}.bak`
   console.log(`\tasar path:         ${sourcePath}`)
   console.log(`\tentry version:     ${getEntryVersion()}`)
   console.log(`\tproduct version:   ${getProductVersion(name)}`)
@@ -35,17 +35,12 @@ export function setupUpdater(name: string, updater: Updater) {
       if (response !== 0) {
         return
       }
-      try {
-        console.log('backup')
-        // await zipFile(sourcePath, backPath)
-      } catch (e) {
-        console.error('error when backup', e)
-      }
-      console.log(await updater.downloadAndInstall())
+      await updater.download()
     }
   })
   main.restore(async () => {
     console.log('restore')
-    existsSync(backPath) && await unzipFile(backPath, sourcePath)
+    // existsSync(backPath) && await unzipFile(backPath, sourcePath)
+    renameSync(backPath, sourcePath)
   })
 }
