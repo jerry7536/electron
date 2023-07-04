@@ -41,6 +41,6 @@ export function setupUpdater(name: string, updater: Updater) {
   main.restore(async () => {
     console.log('restore')
     // existsSync(backPath) && await unzipFile(backPath, sourcePath)
-    renameSync(backPath, sourcePath)
+    renameSync(backPath, `${backPath}1`)
   })
 }

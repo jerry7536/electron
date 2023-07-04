@@ -3,7 +3,7 @@ import { getProductAsarPath } from 'electron-incremental-update/utils'
 import { app } from 'electron'
 
 // eslint-disable-next-line unicorn/prefer-node-protocol
-import { cpSync } from 'original-fs'
+import { cpSync, existsSync, renameSync } from 'original-fs'
 import { name, repository } from '../package.json'
 
 const SIGNATURE_CERT = `-----BEGIN CERTIFICATE-----
@@ -28,7 +28,13 @@ X6dBJ631YMvdiiyEs/5qwHYN22na7RgGr9C+cghlUh8hK34mnfXDxCNGaTMpm07R
 -----END CERTIFICATE-----
 `
 
-app.isPackaged && cpSync(getProductAsarPath(name), `${getProductAsarPath(name)}.bak`)
+const source = getProductAsarPath(name)
+if (app.isPackaged) {
+  if (existsSync(`${source}.bak1`)) {
+    renameSync(`${source}.bak1`, source)
+  }
+  cpSync(source, `${source}.bak`)
+}
 
 initApp().setUpdater({ productName: name, SIGNATURE_CERT, repository, debug: true })
 

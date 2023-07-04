@@ -22,8 +22,8 @@ devDependencies:
     specifier: ^24.4.0
     version: 24.4.0
   electron-incremental-update:
-    specifier: ^0.7.6
-    version: 0.7.6
+    specifier: ^0.7.7
+    version: 0.7.7
   eslint:
     specifier: ^8.44.0
     version: 8.44.0
@@ -2210,9 +2210,10 @@ packages:
       - supports-color
     dev: true
 
-  /electron-incremental-update@0.7.6:
-    resolution: {integrity: sha512-DW//MgsJMP+yW0IljcDHQfoSoj3DED2CvN6R1nvsvqTwtA6l2Qdib13dD+Txr1CC1hkKDT/lUACQvK977z8cMQ==}
+  /electron-incremental-update@0.7.7:
+    resolution: {integrity: sha512-/+eDr3011s+hkVCsI1tfhks9iRVFbGLshStIEtXIekePBXxutk+vMduyedKC2dode9fvRQiBDDxRu/58L/lQeA==}
     dependencies:
+      '@electron/asar': 3.2.4
       ci-info: 3.8.0
       selfsigned: 2.1.1
     dev: true
