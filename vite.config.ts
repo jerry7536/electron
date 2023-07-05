@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
 import { ElectronUpdater } from 'electron-incremental-update/vite'
 import uno from 'unocss/vite'
+import ref from 'vue-functional-ref/dist/vite.js'
 import pkg from './package.json'
 
 // https://vitejs.dev/config/
@@ -18,6 +19,7 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      ref(),
       uno(),
       electron([
         {
@@ -52,7 +54,12 @@ export default defineConfig(({ command }) => {
           },
           vite: {
             plugins: [
-              ElectronUpdater({ productName: pkg.name, version: pkg.version, isBuild }),
+              ElectronUpdater({
+                productName: pkg.name,
+                version: pkg.version,
+                minimumVersion: '0.4.3',
+                isBuild,
+              }),
             ],
             build: {
               reportCompressedSize: false,

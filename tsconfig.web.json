@@ -6,11 +6,19 @@
       "DOM",
       "DOM.Iterable"
     ],
-    "jsx": "react-jsx",
-    "jsxImportSource": "solid-js",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "types": [
-      "vite/client"
+      "vite/client",
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@vue/reactivity": [
+        "./node_modules/vue-functional-ref/types"
+      ]
+    }
   },
   "include": [
     "src",

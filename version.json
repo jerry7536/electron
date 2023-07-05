@@ -1,5 +1,12 @@
 {
-  "signature": "tQxYR8V_BYiZvGU-omgZ8LqXJFywkrWyRlaaY6F-N3dSLXbsFzngJwZfS9z_Bkx_94DFd1Xl7th0rsi_d5UHEpKznVIXcsbV6AGYNo8qnCDgoR2Kuu5wQ-H7bFwlowY1H17p-MTSsU3GN2i3jXEx3wnSyj_ZfDz7eV5b723WR4TdZP8TN6jD8hqYxyA6zjFSgfgDqarwGw-jwnyHPtuRK5-3TZNcdtxvPBiFnfwpH9iXiodllCHf5encOcF9qS6JlEHnt5ua5DqfPAqlwJFXMn4EbrwWO1yg67MCALG-Pk9KPARYR9r27x5WO9rNoLW0Npr3NgImvFGDxHt9OUA03PeqrvLt1H5pFP8lQ100K8FAt20rr6faxWJ5O6Ey7uU8-hYDNHBfBk8Nhiv_de7P_SN6dFv1IL09jpVOfnpc1PRPr4AlyWAXoQhlpecxWtG1y5xfpUYeKZaXFaDPxcIEtQ",
-  "version": "0.4.2",
-  "size": 31321
+  "beta": {
+    "minimumVersion": "0.4.3",
+    "signature": "0ABbxgnDAhP64q0GT3bcytUApRzyIilo-EDsXEE2GagSSHHu0Z0FIEsNDq4AuQd2d-Xb9kk30lZpr_RHvQ_VKm7xMcwZ1u62Y-Sd45kD-0MaT7_GHxyIngVKp050Gg1buWUEYZwYmoT0XfOYKgI4kAzzz_73URUZQ41X4ni4uF8bx-Zj_S8zZtAJwI61l_iOiTUMTt_UYMUTnh5pYCV66sRU4HKj7kvh4drCAgrugiMMTl43Ma37FR_ydcCn85lH5Gdc-tuDehqUO_sYLW-xYxWIPDUk29A41B7JAzbR1siVMcelZrBKbCvjRYPo7ZvGsC1XN3ryaw1YWRkwNoRQkf16vP5af1DTJH4SelUmdwjDEBpFI6VXaiGXmgOmbmELUbKnH8A9ORxSMBFVLnaTO5OGKSomaNJUb58AS-E5bfxjsvXkE-MsmrP-y6w_5jqbyFa6-Yp-nPgoMM5ibZpVTQ",
+    "size": 31780,
+    "version": "0.5.0"
+  },
+  "minimumVersion": "0.4.3",
+  "signature": "0ABbxgnDAhP64q0GT3bcytUApRzyIilo-EDsXEE2GagSSHHu0Z0FIEsNDq4AuQd2d-Xb9kk30lZpr_RHvQ_VKm7xMcwZ1u62Y-Sd45kD-0MaT7_GHxyIngVKp050Gg1buWUEYZwYmoT0XfOYKgI4kAzzz_73URUZQ41X4ni4uF8bx-Zj_S8zZtAJwI61l_iOiTUMTt_UYMUTnh5pYCV66sRU4HKj7kvh4drCAgrugiMMTl43Ma37FR_ydcCn85lH5Gdc-tuDehqUO_sYLW-xYxWIPDUk29A41B7JAzbR1siVMcelZrBKbCvjRYPo7ZvGsC1XN3ryaw1YWRkwNoRQkf16vP5af1DTJH4SelUmdwjDEBpFI6VXaiGXmgOmbmELUbKnH8A9ORxSMBFVLnaTO5OGKSomaNJUb58AS-E5bfxjsvXkE-MsmrP-y6w_5jqbyFa6-Yp-nPgoMM5ibZpVTQ",
+  "size": 31780,
+  "version": "0.5.0"
 }
