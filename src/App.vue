@@ -19,7 +19,7 @@ rendererFn.msg((_: any, data: string) => {
     m="r-2"
     @click="rendererFn.check()"
   >
-    check update
+    check update (beta)
   </button>
   <button
     class="restore"
